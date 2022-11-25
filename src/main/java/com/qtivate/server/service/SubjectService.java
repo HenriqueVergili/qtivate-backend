@@ -1,5 +1,6 @@
 package com.qtivate.server.service;
 
+import com.qtivate.server.exceptions.NotFoundException;
 import com.qtivate.server.model.*;
 import com.qtivate.server.model.Class;
 import com.qtivate.server.respository.SubjectRepository;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -96,6 +98,7 @@ public class SubjectService {
 
     public List<String> getPresentsByClassId(String classId) {
         String result = subjectRepository.getPresencesByClassId(classId);
+        if (result == null) throw new NotFoundException("classId not found");
         return List.of(result.split(","));
     }
 

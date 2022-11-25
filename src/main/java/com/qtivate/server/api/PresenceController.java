@@ -157,6 +157,7 @@ public class PresenceController {
      * @return Resposta HTTP contendo a lista
      */
     @GetMapping(headers = "classId")
+
     public ResponseEntity<List<String>> getPresencesByClass(@RequestHeader String classId) {
        return ResponseEntity.ok().body(subjectService.getPresentsByClassId(classId));
     }
@@ -178,9 +179,7 @@ public class PresenceController {
                     .body(presences);
         } catch (Exception error) {
             System.err.println(error.getMessage());
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .build();
+            throw error;
         }
     }
 
