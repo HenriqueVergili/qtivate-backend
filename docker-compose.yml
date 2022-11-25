@@ -1,0 +1,7 @@
+#version: '3.9'
+#services:
+#  java:
+#    container_name: javinha
+#    restart: always
+#    ports:
+#      - "80:8080"

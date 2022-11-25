@@ -1,0 +1,72 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  # build:
+  #   name: Build & Test
+  #   runs-on: ubuntu-latest
+
+  #   strategy:
+  #     matrix:
+  #       node-version: [14]
+
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - name: Use Node.js ${{ matrix.node-version }}
+  #       uses: actions/setup-node@v2
+  #       with:
+  #         node-version: ${{ matrix.node-version }}
+  #         cache: 'yarn'
+  #     - run: yarn
+  #     - run: yarn format
+  #     - run: yarn lint
+  #     - run: yarn build
+  #     - run: yarn test
+
+  deploy:
+    name: Cloud Run Deployment
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
+
+      - name: Setup GCP Service Account
+        uses: google-github-actions/setup-gcloud@v0
+        with:
+          version: 'latest'
+          service_account_email: ${{ secrets.GCP_SA_EMAIL }}
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          export_default_credentials: true
+
+      - uses: actions/checkout@v3
+      - name: Install Java
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'corretto'
+          cache: maven
+
+      - name: Build Maven
+        run: mvn --batch-mode --update-snapshots verify
+
+      - name: Configure Docker
+        run: |
+          gcloud auth configure-docker
+      - name: Build
+        run: |
+          docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.PROJECT_NAME }}:latest .
+      - name: Push
+        run: |
+          docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.PROJECT_NAME }}:latest
+      - name: Deploy
+        run: |
+          gcloud run deploy ${{ secrets.PROJECT_NAME }} \
+          --region us-central1 \
+          --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.PROJECT_NAME }} \
+          --allow-unauthenticated \
+          --platform managed \
+          --project ${{ secrets.GCP_PROJECT_ID }}
+    needs: build
