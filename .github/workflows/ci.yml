@@ -49,8 +49,11 @@ jobs:
           distribution: 'corretto'
           cache: maven
 
-      - name: Build Maven
+      - name: Download Dependencies Maven
         run: mvn --batch-mode --update-snapshots verify
+        
+      - name: Build Maven
+        run: mvn clean install
 
       - name: Configure Docker
         run: |
