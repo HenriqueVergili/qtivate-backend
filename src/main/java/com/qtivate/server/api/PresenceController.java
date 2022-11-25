@@ -174,7 +174,7 @@ public class PresenceController {
                     .status(HttpStatus.NOT_FOUND)
                     .build();
             return ResponseEntity
-                    .status(HttpStatus.FOUND)
+                    .ok()
                     .body(presences);
         } catch (Exception error) {
             System.err.println(error.getMessage());
