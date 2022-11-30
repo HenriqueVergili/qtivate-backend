@@ -158,8 +158,8 @@ public class PresenceController {
      */
     @GetMapping(headers = "classId")
 
-    public ResponseEntity<List<String>> getPresencesByClass(@RequestHeader String classId) {
-       return ResponseEntity.ok().body(subjectService.getPresentsByClassId(classId));
+    public ResponseEntity<Object[]> getPresencesByClass(@RequestHeader String classId) {
+        return ResponseEntity.ok().body(subjectService.getPresentsByClassId(classId).toArray());
     }
 
     /**

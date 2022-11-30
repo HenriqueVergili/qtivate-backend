@@ -53,7 +53,19 @@ public class Student {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, aid, name);
+        int ret = 666;
+        ret = ret * 13 + this.id.hashCode();
+        ret = ret * 13 + this.aid.hashCode();
+        ret = ret * 13 + this.name.hashCode();
+        return ret;
+    }
+
+    @Override
+    public String toString() {
+        return "{\n" +
+                this.id + ",\n" +
+                this.aid + ",\n" +
+                this.name + "\n}";
     }
 
     public void changeAll(Student newStudent) {

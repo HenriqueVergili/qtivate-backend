@@ -1,6 +1,5 @@
 package com.qtivate.server.service;
 
-import com.qtivate.server.exceptions.NotFoundException;
 import com.qtivate.server.model.*;
 import com.qtivate.server.model.Class;
 import com.qtivate.server.respository.SubjectRepository;
@@ -9,7 +8,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -18,9 +16,12 @@ import java.util.stream.Collectors;
 public class SubjectService {
     private final SubjectRepository subjectRepository;
     private final TokenService tokenService;
-    public SubjectService(SubjectRepository subjectRepository, TokenService tokenService) {
+
+    private final StudentService studentService;
+    public SubjectService(SubjectRepository subjectRepository, TokenService tokenService, StudentService studentService) {
         this.subjectRepository = subjectRepository;
         this.tokenService = tokenService;
+        this.studentService = studentService;
     }
 
     public boolean isTokenValid(String t) throws Exception {
@@ -47,14 +48,14 @@ public class SubjectService {
         if (!foundStudent.get()) return 3;
         AtomicInteger found = new AtomicInteger(2);
         subject.getMeetings().forEach(
-            currentMeeting -> currentMeeting.getClasses().forEach(currentClass -> {
-                if (currentClass.getClassId().equals(classId)) {
-                    if (!currentClass.getPresent().contains(studentAid)) {
-                        currentClass.getPresent().add(studentAid);
-                        found.set(0);
+                currentMeeting -> currentMeeting.getClasses().forEach(currentClass -> {
+                    if (currentClass.getClassId().equals(classId)) {
+                        if (!currentClass.getPresent().contains(studentAid)) {
+                            currentClass.getPresent().add(studentAid);
+                            found.set(0);
+                        }
                     }
-                }
-        }));
+                }));
         subjectRepository.save(subject);
         return found.get();
     }
@@ -96,13 +97,18 @@ public class SubjectService {
         return Map.of("added", String.join(",",addedPresence), "removed", String.join(",",removedPresence));
     }
 
-    public List<String> getPresentsByClassId(String classId) {
+    public List<String[]> getPresentsByClassId(String classId) {
         String result = subjectRepository.getPresencesByClassId(classId);
-        if (result == null) throw new NotFoundException("classId not found");
-        return List.of(result.split(","));
+        List<String> aids = List.of(result.split(","));
+        List<String[]> response = new ArrayList<>();
+        aids.forEach(aid -> {
+            Student found = studentService.getStudentByAID(aid);
+            response.add(new String[]{aid, found.getName()});
+        });
+        return response;
     }
 
-        // Add tokens in class by classId
+    // Add tokens in class by classId
     public int addTokensByClassId(String classId, String[] tokens) {
         Subject subject = subjectRepository.findSubjectByClassId(classId);
         if (subject == null) return 1;
