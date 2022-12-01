@@ -36,7 +36,7 @@ import java.util.*;
  * @author Ariane Paula Barros
  * @version 0.5
  */
-@CrossOrigin(origins = {"http://localhost:3000"})
+@CrossOrigin(origins = {"http://localhost:3000","https://localhost:3000"})
 @RequestMapping("api/v1/presence")
 @RestController
 public class PresenceController {
