@@ -210,4 +210,11 @@ public class PresenceController {
                     .build();
         }
     }
+
+
+    @GetMapping(headers = "subId")
+    public ResponseEntity<Object[]> getStudentsByClassId(@RequestHeader String subId) {
+        return ResponseEntity.ok().body(subjectService.getAllStudentsByClassId(subId).toArray());
+    }
+
 }

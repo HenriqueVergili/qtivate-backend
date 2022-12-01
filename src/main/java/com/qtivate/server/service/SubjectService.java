@@ -98,6 +98,18 @@ public class SubjectService {
         return Map.of("added", String.join(",",addedPresence), "removed", String.join(",",removedPresence));
     }
 
+    public List<SimpleStudent> getAllStudentsByClassId(String subId) {
+        Subject result = subjectRepository.findSubjectBySubId(subId);
+
+        List<Student> list = result.getStudents();
+        List<SimpleStudent> response = new ArrayList<>();
+        for (Student student : list) {
+            response.add(new SimpleStudent(student));
+        }
+
+        return response;
+    }
+
     public List<SimpleStudent> getPresentsByClassId(String classId) {
         String result = subjectRepository.getPresencesByClassId(classId);
         if (result == null) throw new NotFoundException("classId not found");
