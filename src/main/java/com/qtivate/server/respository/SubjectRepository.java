@@ -15,6 +15,9 @@ public interface SubjectRepository extends MongoRepository<Subject, String> {
     @Query("{'meetings.classes.classId':'?0'}")
     Subject findSubjectByClassId(String classId);
 
+    @Query("{'subId':'?0'}")
+    Subject findSubjectBySubId(String subId);
+
     @Aggregation(pipeline = {
             "{'$match': {'meetings.classes.classId': ?0}}",
             "{'$unwind': {path: '$meetings'}}",

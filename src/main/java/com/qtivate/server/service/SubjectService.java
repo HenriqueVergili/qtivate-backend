@@ -1,5 +1,6 @@
 package com.qtivate.server.service;
 
+import com.qtivate.server.exceptions.NotFoundException;
 import com.qtivate.server.model.*;
 import com.qtivate.server.model.Class;
 import com.qtivate.server.respository.SubjectRepository;
@@ -97,13 +98,14 @@ public class SubjectService {
         return Map.of("added", String.join(",",addedPresence), "removed", String.join(",",removedPresence));
     }
 
-    public List<String[]> getPresentsByClassId(String classId) {
+    public List<SimpleStudent> getPresentsByClassId(String classId) {
         String result = subjectRepository.getPresencesByClassId(classId);
-        List<String> aids = List.of(result.split(","));
-        List<String[]> response = new ArrayList<>();
-        aids.forEach(aid -> {
-            Student found = studentService.getStudentByAID(aid);
-            response.add(new String[]{aid, found.getName()});
+        if (result == null) throw new NotFoundException("classId not found");
+        List<String> presenceList = List.of(result.split(","));
+        List<Student> studentList = subjectRepository.findSubjectBySubId(classId.split("-")[0]).getStudents();
+        List<SimpleStudent> response = new ArrayList<>();
+        studentList.forEach(student -> {
+            if (presenceList.contains(student.getAID())) response.add(new SimpleStudent(student));
         });
         return response;
     }
