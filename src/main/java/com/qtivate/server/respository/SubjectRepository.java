@@ -79,6 +79,4 @@ public interface SubjectRepository extends MongoRepository<Subject, String> {
                     "}}"
     })
     String getPresencesByClassId(String classId);
-
-
 }

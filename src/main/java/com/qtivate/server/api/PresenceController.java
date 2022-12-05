@@ -4,6 +4,7 @@ import com.qtivate.server.exceptions.ExpiredTokenException;
 import com.qtivate.server.exceptions.InvalidTokenException;
 import com.qtivate.server.model.SimpleStudent;
 import com.qtivate.server.model.StudentPresence;
+import com.qtivate.server.model.TokensBySubjectName;
 import com.qtivate.server.service.DeviceService;
 import com.qtivate.server.service.SubjectService;
 import com.qtivate.server.service.TokenGenerator;
@@ -191,7 +192,7 @@ public class PresenceController {
      * @return Resposta HTTP
      */
     @PostMapping(headers = {"classes", "quantity"})
-    public ResponseEntity<List<String>> generateAllQrCodes(@RequestHeader String classes, @RequestHeader int quantity) {
+    public ResponseEntity<TokensBySubjectName> generateAllQrCodes(@RequestHeader String classes, @RequestHeader int quantity) {
         try {
             if (quantity < 1) throw new Exception("Quantidade de tokens inválida");
             String[] tokens = new String[quantity];
@@ -200,9 +201,14 @@ public class PresenceController {
             tokenService.addManyTokens(tokens);
             String[] classesIds = classes.split(",");
             for(String classId : classesIds) subjectService.addTokensByClassId(classId, tokens);
+            String subjectName = subjectService.getSubjectNameByClassId(classes.split(",")[0]);
+            TokensBySubjectName tokensBySubjectName = new TokensBySubjectName(
+                    subjectName, List.of(tokens)
+            );
+
             return ResponseEntity
                     .status(HttpStatus.CREATED)
-                    .body(List.of(tokens));
+                    .body(tokensBySubjectName);
         } catch (Exception e) {
             System.err.println(e.getMessage());
             return ResponseEntity

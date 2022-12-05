@@ -142,4 +142,12 @@ public class SubjectService {
     public List<StudentPresence> getPresenceByAID(String aid) {
         return subjectRepository.getStudentPresenceByAid(aid);
     }
+
+    // Get subject name by Class ID
+
+    public String getSubjectNameByClassId (String classId) throws Exception {
+        Subject subject = subjectRepository.findSubjectByClassId(classId);
+        if (subject == null) throw new Exception("Subject name not found");
+        return subject.getName();
+    }
 }
