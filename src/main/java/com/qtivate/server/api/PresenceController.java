@@ -2,6 +2,7 @@ package com.qtivate.server.api;
 
 import com.qtivate.server.exceptions.ExpiredTokenException;
 import com.qtivate.server.exceptions.InvalidTokenException;
+import com.qtivate.server.model.ManualPresenceResult;
 import com.qtivate.server.model.SimpleStudent;
 import com.qtivate.server.model.StudentPresence;
 import com.qtivate.server.model.TokensBySubjectName;
@@ -114,7 +115,7 @@ public class PresenceController {
      * @return Resposta HTTP
      */
     @PostMapping(headers = {"token", "aids"})
-    public ResponseEntity<String> registerPresencesByClassId(@RequestHeader String token, @RequestHeader String aids) {
+    public ResponseEntity registerPresencesByClassId(@RequestHeader String token, @RequestHeader String aids) {
         List<String> successes = new ArrayList<>();
         try {
             if(!subjectService.isTokenValid(token)) return ResponseEntity
@@ -129,10 +130,7 @@ public class PresenceController {
             if (classes.length < 1) return ResponseEntity.badRequest().build();
             for(int i = 0; i < classes.length; i++) {
                 Map<String, String> result = subjectService.setPresenceByClassId(classes[i], List.of(list_aids));
-                return ResponseEntity.ok().body(
-                        "Adicionamos: " + result.get("added") +
-                                "\n Removidos: " + result.get("removed")
-                );
+                return ResponseEntity.ok().body(result);
             }
         } catch (ExpiredTokenException e) {
             return ResponseEntity
