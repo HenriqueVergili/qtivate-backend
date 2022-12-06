@@ -98,15 +98,11 @@ public class SubjectService {
         return Map.of("added", String.join(",",addedPresence), "removed", String.join(",",removedPresence));
     }
 
-    public List<SimpleStudent> getAllStudentsByClassId(String subId) {
-        Subject result = subjectRepository.findSubjectBySubId(subId);
-
-        List<Student> list = result.getStudents();
+    public List<SimpleStudent> getAllStudentsBySubId(String subId) {
         List<SimpleStudent> response = new ArrayList<>();
-        for (Student student : list) {
+        subjectRepository.findStudentsBySubId(subId).forEach(student -> {
             response.add(new SimpleStudent(student));
-        }
-
+        });
         return response;
     }
 

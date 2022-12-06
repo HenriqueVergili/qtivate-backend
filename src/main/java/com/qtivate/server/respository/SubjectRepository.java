@@ -1,9 +1,8 @@
 package com.qtivate.server.respository;
 
 import com.mongodb.client.result.DeleteResult;
+import com.qtivate.server.model.*;
 import com.qtivate.server.model.Class;
-import com.qtivate.server.model.StudentPresence;
-import com.qtivate.server.model.Subject;
 import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.mongodb.repository.DeleteQuery;
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -17,6 +16,16 @@ public interface SubjectRepository extends MongoRepository<Subject, String> {
 
     @Query("{'subId':'?0'}")
     Subject findSubjectBySubId(String subId);
+
+    @Aggregation(pipeline = {
+            "{'$match': {'subId': ?0}}",
+            "{'$unwind': {path: '$students'}}",
+            "{'$project':" +
+                    "{'aid': '$students.aid'," +
+                    "'name': '$students.name'}}",
+            "{'$sort': {name: 1}}"
+    })
+    List<Student> findStudentsBySubId(String subId);
 
     @Aggregation(pipeline = {
             "{'$match': {'meetings.classes.classId': ?0}}",
