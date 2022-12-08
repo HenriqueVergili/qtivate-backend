@@ -2,10 +2,7 @@ package com.qtivate.server.api;
 
 import com.qtivate.server.exceptions.ExpiredTokenException;
 import com.qtivate.server.exceptions.InvalidTokenException;
-import com.qtivate.server.model.ManualPresenceResult;
-import com.qtivate.server.model.SimpleStudent;
-import com.qtivate.server.model.StudentPresence;
-import com.qtivate.server.model.TokensBySubjectName;
+import com.qtivate.server.model.*;
 import com.qtivate.server.service.DeviceService;
 import com.qtivate.server.service.SubjectService;
 import com.qtivate.server.service.TokenGenerator;
@@ -219,6 +216,13 @@ public class PresenceController {
     @GetMapping(headers = "subId")
     public ResponseEntity<Object[]> getStudentsByClassId(@RequestHeader String subId) {
         return ResponseEntity.ok().body(subjectService.getAllStudentsByClassId(subId).toArray());
+    }
+
+    @PostMapping(headers = "subId")
+    public ResponseEntity<Integer> addStudentsByClassId(@RequestHeader String subId,
+                                                         @RequestBody Student student) {
+        return ResponseEntity.ok().body(
+                subjectService.addStudentBySubId(subId, student.getAID(), student.getName()));
     }
 
 }

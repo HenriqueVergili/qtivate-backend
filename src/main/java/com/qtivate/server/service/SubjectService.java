@@ -150,4 +150,13 @@ public class SubjectService {
         if (subject == null) throw new Exception("Subject name not found");
         return subject.getName();
     }
+
+    public int addStudentBySubId(String subId, String aid, String name) {
+        Subject subject = subjectRepository.findSubjectBySubId(subId);
+        Student newStudent = new Student(aid, name);
+        subject.getStudents().add(newStudent);
+        subject.setStudents(subject.getStudents());
+        subjectRepository.save(subject);
+        return 0;
+    }
 }
