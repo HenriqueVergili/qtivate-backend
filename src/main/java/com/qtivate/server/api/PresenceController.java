@@ -154,7 +154,6 @@ public class PresenceController {
      * @return Resposta HTTP contendo a lista
      */
     @GetMapping(headers = "classId")
-
     public ResponseEntity<List<SimpleStudent>> getPresencesByClass(@RequestHeader String classId) {
         return ResponseEntity.ok().body(subjectService.getPresentsByClassId(classId));
     }
@@ -212,10 +211,14 @@ public class PresenceController {
         }
     }
 
-
+    /**
+     * Retorna a lista de alunos pertencentes a um dado subId.
+     * @param subId RA do aluno
+     * @return Resposta HTTP contendo a lista
+     */
     @GetMapping(headers = "subId")
-    public ResponseEntity<Object[]> getStudentsByClassId(@RequestHeader String subId) {
-        return ResponseEntity.ok().body(subjectService.getAllStudentsByClassId(subId).toArray());
+    public ResponseEntity<Object[]> getStudentsBySubId(@RequestHeader String subId) {
+        return ResponseEntity.ok().body(subjectService.getAllStudentsBySubId(subId).toArray());
     }
 
     @PostMapping(headers = "subId")
