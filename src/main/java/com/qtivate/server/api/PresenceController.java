@@ -70,7 +70,7 @@ public class PresenceController {
             if (macVerification == 1) deviceService.addDevice(mac);
             if (macVerification == 2) return ResponseEntity
                     .status(HttpStatus.FORBIDDEN)
-                    .body("Device " + mac + " is still blocked");
+                    .body("Endereço " + mac + " ainda está bloqueado");
 
             String[] data = token.split(":");
             String[] classes = data[1].split(",");
@@ -78,13 +78,13 @@ public class PresenceController {
                 int code = subjectService.addInPresenceByClassId(classes[i], aid);
                 if (code == 1) return ResponseEntity
                         .status(HttpStatus.NOT_FOUND)
-                        .body("Class " + i + " not found");
+                        .body("Aula " + i + " não encontrada");
                 if (code == 2) return ResponseEntity
                         .status(HttpStatus.CONFLICT)
-                        .body("Duplicated presence in class " + i);
+                        .body("Prsença duplicada na aula " + i);
                 if (code == 3) return ResponseEntity
                         .status(HttpStatus.NOT_ACCEPTABLE)
-                        .body("Student does not belong to class " + i);
+                        .body("Estudante não pertence a aula " + i);
             }
         } catch (ExpiredTokenException e) {
             return ResponseEntity
