@@ -81,7 +81,7 @@ public class PresenceController {
                         .body("Aula " + i + " não encontrada");
                 if (code == 2) return ResponseEntity
                         .status(HttpStatus.CONFLICT)
-                        .body("Prsença duplicada na aula " + i);
+                        .body("Presença duplicada na aula " + i);
                 if (code == 3) return ResponseEntity
                         .status(HttpStatus.NOT_ACCEPTABLE)
                         .body("Estudante não pertence a aula " + i);
