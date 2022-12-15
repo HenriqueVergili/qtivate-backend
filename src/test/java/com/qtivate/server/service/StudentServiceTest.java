@@ -93,13 +93,13 @@ public class StudentServiceTest {
 
     private Student buildStudent() {
         Student student = new Student("aid", "name");
-        student.setId(String.valueOf(student.hashCode()));
+        student.setId("12345678");
         return student;
     }
 
     private Student buildStudent(String aid, String name) {
         Student student = new Student(aid, name);
-        student.setId(String.valueOf(student.hashCode()));
+        student.setId("12345678");
         return student;
     }
 }
